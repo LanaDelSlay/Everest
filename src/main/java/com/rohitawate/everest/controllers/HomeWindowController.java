@@ -232,6 +232,7 @@ public class HomeWindowController implements Initializable {
       		ButtonType close = new ButtonType("Close it!!!", ButtonBar.ButtonData.CANCEL_CLOSE);
       		ButtonType keep = new ButtonType("Nevermind, sir!", ButtonBar.ButtonData.OK_DONE);
     		Alert alert = new Alert(AlertType.WARNING, "Are you sure?", close, keep);
+    		alert.setHeaderText(null);
     		alert.setContentText("You're about to close the last tab, closing the program, are you sure you want to do this?");
     		alert.showAndWait();
     	   if (alert.getResult().toString().contains("CANCEL")) {
