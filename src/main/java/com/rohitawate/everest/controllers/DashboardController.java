@@ -51,13 +51,18 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.MediaType;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -73,6 +78,8 @@ public class DashboardController implements Initializable {
     @FXML
     private VBox dashboard;
     @FXML
+    private ImageView copyButton;
+    @FXML
     TextField addressField;
     @FXML
     ComboBox<String> httpMethodBox, responseTypeBox;
@@ -81,6 +88,8 @@ public class DashboardController implements Initializable {
     @FXML
     private Label statusCode, statusCodeDescription, responseTime,
             responseSize, errorTitle, errorDetails;
+    @FXML
+    private HBox responseDetails;
     @FXML
     private JFXButton cancelButton, copyBodyButton;
     @FXML
@@ -91,6 +100,8 @@ public class DashboardController implements Initializable {
     private Tab responseBodyTab, visualizerTab, responseHeadersTab;
     @FXML
     private JFXProgressBar progressBar;
+    @FXML
+    private Label importantMessageBox;
 
     private JFXSnackbar snackbar;
     private List<StringKeyValueFieldController> paramsControllers;
@@ -212,6 +223,14 @@ public class DashboardController implements Initializable {
         responseHeadersTab.setContent(responseHeadersViewer);
     }
 
+    @FXML
+    void copyToClipboard(MouseEvent event) {
+    	String myString = responseArea.getText();
+    	StringSelection stringSelection = new StringSelection(myString);
+    	Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    	clipboard.setContents(stringSelection, null);
+    }
+    
     @FXML
     void sendRequest() {
         if (requestManager != null) {
@@ -398,6 +417,13 @@ public class DashboardController implements Initializable {
 
         prettifyResponseBody(response);
         statusCode.setText(Integer.toString(response.getStatusCode()));
+        if (statusCode.getText().contains("404")) {
+        	statusCode.setStyle("-fx-background-color:orangered;");
+        } else if (statusCode.getText().toString().contains("202") || statusCode.getText().toString().contains("200") )  {
+        	statusCode.setStyle("-fx-background-color:green;");
+        } else {
+        	statusCode.setStyle("-fx-background-color:none");
+        }
         statusCodeDescription.setText(EverestResponse.getReasonPhrase(response.getStatusCode()));
         responseTime.setText(Long.toString(response.getTime()) + " ms");
         responseSize.setText(Integer.toString(response.getSize()) + " B");

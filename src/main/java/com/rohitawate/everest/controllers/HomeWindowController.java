@@ -16,6 +16,15 @@
 
 package com.rohitawate.everest.controllers;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.ResourceBundle;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.rohitawate.everest.logging.LoggingService;
 import com.rohitawate.everest.misc.EverestUtilities;
@@ -25,6 +34,7 @@ import com.rohitawate.everest.models.requests.HTTPConstants;
 import com.rohitawate.everest.state.ComposerState;
 import com.rohitawate.everest.state.DashboardState;
 import com.rohitawate.everest.sync.SyncManager;
+
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.property.StringProperty;
@@ -34,20 +44,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.ResourceBundle;
 
 public class HomeWindowController implements Initializable {
     @FXML
@@ -206,10 +211,14 @@ public class HomeWindowController implements Initializable {
         onTabSwitched(prevState, prevTab, newTab);
 
         newTab.setOnCloseRequest(e -> {
-            removeTab(newTab);
-
-            // Closes the application if the last tab is closed
+      if (tabPane.getTabs().size() < 2) {
+     	  e.consume();
+      }
+        		removeTab(newTab);
+        	
+           // Closes the application if the last tab is closed
             if (tabPane.getTabs().size() == 0) {
+            	
                 saveState();
                 Stage thisStage = (Stage) homeWindowSP.getScene().getWindow();
                 thisStage.close();
@@ -218,11 +227,28 @@ public class HomeWindowController implements Initializable {
     }
 
     private void removeTab(Tab newTab) {
-        DashboardState state = tabStateMap.remove(newTab);
-        state = null;
-        tabPane.getTabs().remove(newTab);
-        newTab.setOnCloseRequest(null);
-        newTab = null;
+      	if (tabPane.getTabs().size() == 1) {
+      		//saveState();
+      		ButtonType close = new ButtonType("Close it!!!", ButtonBar.ButtonData.CANCEL_CLOSE);
+      		ButtonType keep = new ButtonType("Nevermind, sir!", ButtonBar.ButtonData.OK_DONE);
+    		Alert alert = new Alert(AlertType.WARNING, "Are you sure?", close, keep);
+    		alert.setContentText("You're about to close the last tab, closing the program, are you sure you want to do this?");
+    		alert.showAndWait();
+    	   if (alert.getResult().toString().contains("CANCEL")) {
+    		   System.out.println("Bring the slaughter");
+    	        DashboardState state = tabStateMap.remove(newTab);
+    	        state = null;
+    	        tabPane.getTabs().remove(newTab);
+    	        newTab.setOnCloseRequest(null);
+    	        newTab = null;
+    		} else if (alert.getResult().toString().contains("OK")) {
+    			//recoverState();
+    		}
+    	   
+      	}
+      	
+      	
+
     }
 
     private void saveState() {

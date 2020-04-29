@@ -137,12 +137,12 @@
 						</StackPane>
 					</children>
 				</StackPane>
-            <Button fx:id="myButton" alignment="CENTER" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#clearResults" text="Clear Results" textFill="RED">
-               <font>
-                  <Font name="Arial" size="15.0" />
-               </font>
-            </Button>
 			</children>
 		</StackPane>
+      <Button fx:id="myButton" alignment="CENTER" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#clearResults" text="Clear Results" textFill="RED">
+         <font>
+            <Font name="Arial" size="15.0" />
+         </font>
+      </Button>
 	</children>
 </VBox>
