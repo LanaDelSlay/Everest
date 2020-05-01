@@ -236,7 +236,6 @@ public class HomeWindowController implements Initializable {
     		alert.setContentText("You're about to close the last tab, closing the program, are you sure you want to do this?");
     		alert.showAndWait();
     	   if (alert.getResult().toString().contains("CANCEL")) {
-    		   System.out.println("Bring the slaughter");
     	        DashboardState state = tabStateMap.remove(newTab);
     	        state = null;
     	        tabPane.getTabs().remove(newTab);
